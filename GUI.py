@@ -1,8 +1,12 @@
 import sys
 import cv2
+import requests
+import json
+import base64
 from PyQt5.QtGui import QImage, QPixmap
 from PyQt5.QtWidgets import (QApplication, QDialog, QFileDialog, QGridLayout,
                              QLabel, QPushButton)
+from config import *
 
 
 class GUI(QDialog):
@@ -40,6 +44,10 @@ class GUI(QDialog):
             return
 
         self.refresh()
+        self.GetToken()
+        print(1)
+        print(fileName)
+        self.GeneralDeteect(fileName)
 
     def refresh(self):
         # 提取图像的尺寸和通道, 用于将opencv下的image转换成Qimage
@@ -50,6 +58,26 @@ class GUI(QDialog):
 
         # 将Qimage显示出来
         self.label.setPixmap(QPixmap.fromImage(self.qImg))
+
+    def GetToken(self):
+        r = requests.get(token_url)
+        hjson = json.loads(r.text)
+        try:
+            self.token = hjson['access_token']
+        except KeyError:
+            print(hjson['error'])
+            print(hjson['error_description'])
+
+    def GeneralDeteect(self, filename):
+        data = {}
+        with open(filename, 'rb') as f:
+            base64_data = base64.b64encode(f.read())
+        data['image'] = base64_data
+        data['access_token'] = self.token
+        r = requests.post(general_url, headers=header, data=data)
+        hjson = json.loads(r.text)
+        for dicts in hjson['words_result']:
+            print(dicts['words'])
 
 
 if __name__ == '__main__':
