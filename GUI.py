@@ -79,6 +79,7 @@ class GUI(QDialog):
         self.refresh()
         # 将图片发送到api获得文字信息
         try:
+            # 弹出识别中的对话框，避免窗口在上传中未响应
             LoadingBox = QMessageBox()
             LoadingBox.setIcon(QMessageBox.Information)
             LoadingBox.setWindowIcon(QIcon('./icon.jpg'))
@@ -87,6 +88,7 @@ class GUI(QDialog):
             LoadingBox.setStandardButtons(QMessageBox.Ok)
             LoadingBox.setDefaultButton(QMessageBox.Ok)
             LoadingBox.exec()
+            # 创建新的线程
             new_thread = threading.Thread(target=self.GeneralDetect(fileName), name='GetTexts')
             new_thread.start()
             new_thread.join()
