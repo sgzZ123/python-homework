@@ -3,6 +3,7 @@ import cv2
 import requests
 import json
 import base64
+import threading
 from PyQt5.QtGui import QImage, QPixmap, QIcon
 from PyQt5.QtWidgets import (QApplication, QDialog, QFileDialog, QGridLayout,
                              QLabel, QPushButton, QComboBox, QMessageBox)
@@ -78,7 +79,17 @@ class GUI(QDialog):
         self.refresh()
         # 将图片发送到api获得文字信息
         try:
-            self.GeneralDeteect(fileName)
+            LoadingBox = QMessageBox()
+            LoadingBox.setIcon(QMessageBox.Information)
+            LoadingBox.setWindowIcon(QIcon('./icon.jpg'))
+            LoadingBox.setWindowTitle('result')
+            LoadingBox.setText('识别中')
+            LoadingBox.setStandardButtons(QMessageBox.Ok)
+            LoadingBox.setDefaultButton(QMessageBox.Ok)
+            LoadingBox.exec()
+            new_thread = threading.Thread(target=self.GeneralDetect(fileName), name='GetTexts')
+            new_thread.start()
+            new_thread.join()
         except:
             pass
         # 显示结果
@@ -105,7 +116,7 @@ class GUI(QDialog):
             QMessageBox.information(self, hjson['error'], hjson['error_description'])
             raise TimeoutError
 
-    def GeneralDeteect(self, filename):
+    def GeneralDetect(self, filename):
         # 打开文件并进行base64编码
         with open(filename, 'rb') as f:
             base64_data = base64.b64encode(f.read())
@@ -123,6 +134,7 @@ class GUI(QDialog):
         self.results = []
         for dicts in hjson['words_result']:
             self.results.append(dicts['words'])
+
     # 选择语种
     def ChooseLanguage(self, text):
         self.data['language_type'] = language_dict[text]
