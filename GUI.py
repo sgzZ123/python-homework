@@ -109,6 +109,10 @@ class GUI(QDialog):
         self.label.setPixmap(QPixmap.fromImage(self.qImg))
 
     def GetToken(self):
+        with open('key.txt', 'r') as f:
+            AK = f.readline()[0:-1]
+            SK = f.readline()[0:-1]
+        token_url = 'https://aip.baidubce.com/oauth/2.0/token?grant_type=client_credentials&client_id=%s&client_secret=%s' % (AK,SK)
         r = requests.get(token_url)
         #  json解读返回结果
         hjson = json.loads(r.text)

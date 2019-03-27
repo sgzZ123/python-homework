@@ -1,11 +1,5 @@
-# AppKey
-AK = 'xbAeXztkLUyxQAs4qostCfTE'
-# SecretKey
-SK = 'YqnfSUQCE60iavabP3jPBmVFWaGygiMw'
 # header
 header = {'Content-Type	':'application/x-www-form-urlencoded'}
-# 获取token的url地址
-token_url = 'https://aip.baidubce.com/oauth/2.0/token?grant_type=client_credentials&client_id=%s&client_secret=%s' % (AK,SK)
 # 文字识别api地址
 general_url = 'https://aip.baidubce.com/rest/2.0/ocr/v1/general_basic'
 # 语种字典
