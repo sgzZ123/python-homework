@@ -132,8 +132,9 @@ class GUI(QDialog):
             raise TimeoutError
         # 将编码后图片存入要发送的数据字典
         self.data['image'] = base64_data
+        url = general_url + '?access_token=' + self.token
         # 发送请求
-        r = requests.post(general_url, headers=header, data=self.data)
+        r = requests.post(url, headers=header, data=self.data)
         # json解读
         hjson = json.loads(r.text)
         # 将结果放入list
